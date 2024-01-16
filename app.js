@@ -5,9 +5,9 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const { MongoClient } = require("mongodb");
-const { connect } = require("./db/config");
-const UserRoutes = require("./routes/user");
-const ChatRoutes = require("./routes/chat");
+// const { connect } = require("./db/config");
+// const UserRoutes = require("./routes/user");
+// const ChatRoutes = require("./routes/chat");
 const app = express();
 
 app.use(cookieParser());
