@@ -49,7 +49,41 @@ exports.signup = async (req, res) => {
 };
 
 //login
-exports.login = async (req, res) => {};
+exports.login = async (req, res) => {
+  try {
+    //check if user exists
+    const userResponse = await User.findOne({ email: req.body.email });
+
+    if (!userResponse) {
+      return res.status(404).json("User does not exists");
+    }
+
+    const passwordMatch = await bcrypt.compare(
+      req.body.password,
+      userResponse.encryptedPassword
+    );
+
+    if (!passwordMatch) {
+      return res.status(401).json("Incorrect password"); // Unauthorized
+    }
+
+    const { encryptedPassword, ...userWithoutPassword } =
+      userResponse.toObject();
+
+    const token = jwt.sign(
+      { name: userResponse.name, userId: userResponse._id },
+      process.env.JWT_SECRET_KEY
+    );
+
+    res.status(200).json({
+      message: "Login successful",
+      user: userWithoutPassword,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Internal Server Error");
+  }
+};
 
 //logout
 exports.logout = async (req, res) => {};
