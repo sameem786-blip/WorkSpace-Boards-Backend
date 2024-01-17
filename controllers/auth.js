@@ -86,7 +86,14 @@ exports.login = async (req, res) => {
 };
 
 //logout
-exports.logout = async (req, res) => {};
+exports.logout = async (req, res) => {
+  try {
+    res.status(200).json({ message: "user logged out" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Internal Server Error");
+  }
+};
 
 //forget-password
 exports.forgetPassword = async (req, res) => {};
