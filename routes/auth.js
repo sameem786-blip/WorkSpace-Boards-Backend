@@ -2,10 +2,10 @@ const router = require("express").Router();
 
 const authController = require("../controllers/auth.js");
 
-router.post("/signup", userController.signup);
-router.post("/login", userController.login);
-router.post("/logout", userController.logout);
-router.post("/forgetPassword", userController.forgetPassword);
-router.post("/googleAuth", userController.googleAuth);
+router.post("/signup", authController.signup);
+router.post("/login", authController.login);
+router.post("/logout", authController.logout);
+router.post("/forgetPassword", authController.forgetPassword);
+router.post("/googleAuth", authController.googleAuth);
 
 module.exports = router;
