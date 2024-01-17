@@ -4,6 +4,8 @@ const env = require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
+const AuthRoutes = require("./routes/auth");
+
 const { MongoClient } = require("mongodb");
 // const { connect } = require("./db/config");
 // const UserRoutes = require("./routes/user");
@@ -31,5 +33,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // connect();
+
+app.use("/auth/user/", AuthRoutes);
 
 module.exports = app;
