@@ -19,8 +19,6 @@ exports.signup = async (req, res) => {
     // Check if the user already exists
     const userResponse = await User.findOne({ email: userObj.email });
 
-    console.log("A");
-
     if (userResponse) {
       return res.status(409).json("User already exists");
     }
@@ -31,9 +29,7 @@ exports.signup = async (req, res) => {
     userObj.encryptedPassword = hashedPassword;
 
     // Create the user with the hashed password
-    console.log("B");
     const newUser = await User.create(userObj);
-    console.log("C");
 
     // Remove password from the response
     const { encryptedPassword, ...userWithoutPassword } = newUser.toObject();
