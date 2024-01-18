@@ -5,13 +5,28 @@ const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const { OAuth2Client } = require("google-auth-library");
 
+const helpers = require("../helpers/index");
+
 const oauth2Client = new OAuth2Client();
 
 //sign-up
 exports.signup = async (req, res) => {
   try {
+    if (!helpers.testEmailSyntax(req.body.email)) {
+      return res.status(400).json("Email Invalid");
+    }
+
+    if (!helpers.testPasswordSyntax(req.body.password)) {
+      return res
+        .status(400)
+        .json(
+          "Invalid Password, Password must be 8 characters long and a mixture of Capital and small characters with numbers."
+        );
+    }
     const userObj = {
-      name: req.body.name,
+      username: req.body.username,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
       email: req.body.email,
       encryptedPassword: req.body.password,
     };
