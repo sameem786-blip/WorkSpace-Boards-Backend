@@ -7,7 +7,7 @@ const cors = require("cors");
 const AuthRoutes = require("./routes/auth");
 
 const { MongoClient } = require("mongodb");
-// const { connect } = require("./db/config");
+const { connect } = require("./db/config");
 // const UserRoutes = require("./routes/user");
 // const ChatRoutes = require("./routes/chat");
 const app = express();
@@ -32,7 +32,7 @@ app.use(
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// connect();
+connect();
 
 app.use("/auth/user/", AuthRoutes);
 
