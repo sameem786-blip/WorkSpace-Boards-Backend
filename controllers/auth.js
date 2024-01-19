@@ -12,8 +12,15 @@ const oauth2Client = new OAuth2Client();
 //sign-up
 exports.signup = async (req, res) => {
   try {
+    if (!req.body.email) {
+      return res.status(400).json({ message: "Email not provided" });
+    }
     if (!helpers.testEmailSyntax(req.body.email)) {
       return res.status(400).json("Email Invalid");
+    }
+
+    if (!req.body.password) {
+      return res.status(400).json({ message: "Password not provided" });
     }
 
     if (!helpers.testPasswordSyntax(req.body.password)) {
@@ -75,7 +82,7 @@ exports.login = async (req, res) => {
     );
 
     if (!passwordMatch) {
-      return res.status(401).json("Incorrect password"); // Unauthorized
+      return res.status(401).json("Incorrect password");
     }
 
     const { encryptedPassword, ...userWithoutPassword } =

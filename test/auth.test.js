@@ -35,6 +35,17 @@ describe("User Signup API", () => {
     assert.strictEqual(response.status, 409);
     assert.strictEqual(response.text, '"User already exists"');
   });
+  it("should return 400 if email is not provided", async () => {
+    const response = await supertest(app).post("/auth/user/signup").send({
+      username: "testuser",
+      firstName: "Test",
+      lastName: "User",
+      password: "Testpassword8",
+    });
+
+    assert.strictEqual(response.status, 400);
+    assert.deepStrictEqual(response.body, { message: "Email not provided" });
+  });
   it("should return 400 for invalid email syntax", async () => {
     const response = await supertest(app).post("/auth/user/signup").send({
       username: "testuser",
@@ -45,6 +56,18 @@ describe("User Signup API", () => {
     });
 
     assert.strictEqual(response.status, 400);
+  });
+
+  it("should return 400 if password is not provided", async () => {
+    const response = await supertest(app).post("/auth/user/signup").send({
+      username: "testuser",
+      firstName: "Test",
+      lastName: "User",
+      email: "test@example.com",
+    });
+
+    assert.strictEqual(response.status, 400);
+    assert.deepStrictEqual(response.body, { message: "Password not provided" });
   });
 
   // Assuming you have a helper function testPasswordSyntax
