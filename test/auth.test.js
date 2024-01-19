@@ -93,3 +93,5 @@ describe("User Signup API", () => {
     await User.deleteOne({ email: "testuser@example.com" });
   });
 });
+
+describe("User Login API", () => {});
