@@ -89,7 +89,7 @@ describe("User Signup API", () => {
     // assert.strictEqual(savedUser.username, "testuser");
     // Add more assertions as needed based on your schema
 
-    User.deleteOne({ email: "test@example.com" });
-    User.deleteOne({ email: "testuser@example.com" });
+    await User.deleteOne({ email: "test@example.com" });
+    await User.deleteOne({ email: "testuser@example.com" });
   });
 });
