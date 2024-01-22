@@ -73,7 +73,7 @@ exports.login = async (req, res) => {
     const userResponse = await User.findOne({ email: req.body.email });
 
     if (!userResponse) {
-      return res.status(404).json("User does not exists");
+      return res.status(404).json({ message: "User does not exists" });
     }
 
     const passwordMatch = await bcrypt.compare(
@@ -82,7 +82,7 @@ exports.login = async (req, res) => {
     );
 
     if (!passwordMatch) {
-      return res.status(401).json("Incorrect password");
+      return res.status(401).json({ message: "Incorrect password" });
     }
 
     const { encryptedPassword, ...userWithoutPassword } =
@@ -90,16 +90,17 @@ exports.login = async (req, res) => {
 
     const token = jwt.sign(
       { name: userResponse.name, userId: userResponse._id },
-      process.env.JWT_SECRET_KEY
+      process.env.JWT_SECRET
     );
 
     res.status(200).json({
       message: "Login successful",
+      token: token,
       user: userWithoutPassword,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json("Internal Server Error");
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 

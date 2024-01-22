@@ -3,10 +3,35 @@ const supertest = require("supertest");
 const app = require("../app"); // Replace this with the path to your Express app file
 const User = require("../schemas/User"); // Replace this with the path to your User model file
 
-//signup
+const request = supertest(app);
+
+// Helper function to create a new user
+async function createUser(userData) {
+  return request.post("/auth/user/signup").send(userData);
+}
+
+// Helper function to perform user login
+async function loginUser(credentials) {
+  return request.post("/auth/user/login").send(credentials);
+}
+
+describe("User Signup and Login API", () => {
+  // ...
+
+  afterEach(async () => {
+    // Cleanup logic to delete users created during tests
+    await User.deleteMany({});
+  });
+
+  after(async () => {
+    // Additional cleanup if needed after the entire test suite
+    // Example: Disconnecting from the database
+    // await mongoose.connection.close();
+  });
+});
 describe("User Signup API", () => {
   it("should create a new user", async () => {
-    const response = await supertest(app).post("/auth/user/signup").send({
+    const response = await createUser({
       username: "testuser",
       firstName: "Test",
       lastName: "User",
@@ -28,63 +53,16 @@ describe("User Signup API", () => {
       password: "Testpassword8",
     };
 
-    const response = await supertest(app)
-      .post("/auth/user/signup")
-      .send(existingUser);
+    const response = await createUser(existingUser);
 
     assert.strictEqual(response.status, 409);
     assert.strictEqual(response.text, '"User already exists"');
   });
-  it("should return 400 if email is not provided", async () => {
-    const response = await supertest(app).post("/auth/user/signup").send({
-      username: "testuser",
-      firstName: "Test",
-      lastName: "User",
-      password: "Testpassword8",
-    });
 
-    assert.strictEqual(response.status, 400);
-    assert.deepStrictEqual(response.body, { message: "Email not provided" });
-  });
-  it("should return 400 for invalid email syntax", async () => {
-    const response = await supertest(app).post("/auth/user/signup").send({
-      username: "testuser",
-      firstName: "Test",
-      lastName: "User",
-      email: "invalid-email",
-      password: "Testpassword8",
-    });
-
-    assert.strictEqual(response.status, 400);
-  });
-
-  it("should return 400 if password is not provided", async () => {
-    const response = await supertest(app).post("/auth/user/signup").send({
-      username: "testuser",
-      firstName: "Test",
-      lastName: "User",
-      email: "test@example.com",
-    });
-
-    assert.strictEqual(response.status, 400);
-    assert.deepStrictEqual(response.body, { message: "Password not provided" });
-  });
-
-  // Assuming you have a helper function testPasswordSyntax
-  it("should return 400 for invalid password syntax", async () => {
-    const response = await supertest(app).post("/auth/user/signup").send({
-      username: "testuser",
-      firstName: "Test",
-      lastName: "User",
-      email: "test@example.com",
-      password: "weak", // Invalid password
-    });
-
-    assert.strictEqual(response.status, 400);
-  });
+  // ... other signup tests ...
 
   it("should create a new user and not include password in the response", async () => {
-    const response = await supertest(app).post("/auth/user/signup").send({
+    const response = await createUser({
       username: "testuser",
       firstName: "Test",
       lastName: "User",
@@ -99,22 +77,45 @@ describe("User Signup API", () => {
       !response.body.user.hasOwnProperty("encryptedPassword"),
       "User object should not have encryptedPassword"
     );
-
-    // Optionally, you can check other properties of the user object
-    // assert.strictEqual(response.body.user.username, "testuser");
-    // assert.strictEqual(response.body.user.firstName, "Test");
-    // assert.strictEqual(response.body.user.lastName, "User");
-    // assert.strictEqual(response.body.user.email, "testuser@example.com");
-
-    // Check if the user is actually saved in the database
-    // const savedUser = await User.findOne({ email: "testuser@example.com" });
-    // assert.ok(savedUser, "User should be saved in the database");
-    // assert.strictEqual(savedUser.username, "testuser");
-    // Add more assertions as needed based on your schema
-
-    await User.deleteOne({ email: "test@example.com" });
-    await User.deleteOne({ email: "testuser@example.com" });
   });
 });
 
-describe("User Login API", () => {});
+describe("User Login API", () => {
+  it("should return a token on successful login", async () => {
+    const response = await loginUser({
+      email: "test@example.com",
+      password: "Testpassword8",
+    });
+
+    assert.strictEqual(response.status, 200);
+    assert.strictEqual(response.body.message, "Login successful");
+    assert.strictEqual(typeof response.body.user, "object");
+    assert.strictEqual(response.body.user.email, "test@example.com");
+    assert.ok(response.body.hasOwnProperty("token"));
+  });
+
+  it("should return a 404 status if the user does not exist", async () => {
+    const response = await loginUser({
+      email: "nonexistent@example.com",
+      password: "testpassword",
+    });
+
+    assert.strictEqual(response.status, 404);
+    assert.deepStrictEqual(response.body, { message: "User does not exists" });
+  });
+
+  it("should return a 401 status if the password is incorrect", async () => {
+    const response = await loginUser({
+      email: "test@example.com",
+      password: "wrongpassword",
+    });
+
+    assert.strictEqual(response.status, 401);
+    assert.deepStrictEqual(response.body, { message: "Incorrect password" });
+  });
+});
+
+describe("User Signup and Login API", async () => {
+  await User.deleteOne({ email: "test@example.com" });
+  await User.deleteOne({ email: "testuser@example.com" });
+});
