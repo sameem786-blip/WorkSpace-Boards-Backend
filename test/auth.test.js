@@ -110,12 +110,10 @@ describe("User Login API", () => {
       password: "wrongpassword",
     });
 
+    await User.deleteOne({ email: "test@example.com" });
+    await User.deleteOne({ email: "testuser@example.com" });
+
     assert.strictEqual(response.status, 401);
     assert.deepStrictEqual(response.body, { message: "Incorrect password" });
   });
-});
-
-describe("User Signup and Login API", async () => {
-  await User.deleteOne({ email: "test@example.com" });
-  await User.deleteOne({ email: "testuser@example.com" });
 });
