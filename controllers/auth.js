@@ -90,7 +90,14 @@ exports.login = async (req, res) => {
       userResponse.toObject();
 
     const token = jwt.sign(
-      { name: userResponse.name, userId: userResponse._id },
+      {
+        username: userResponse.username,
+        firstName: userResponse.firstName,
+        lastName: userResponse.lastName,
+        email: userResponse.email,
+        userId: userResponse._id,
+        profilePic: userResponse.profilePic,
+      },
       process.env.JWT_SECRET
     );
 
