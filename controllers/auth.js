@@ -36,6 +36,7 @@ exports.signup = async (req, res) => {
       lastName: req.body.lastName,
       email: req.body.email,
       encryptedPassword: req.body.password,
+      role: "user",
     };
 
     // Check if the user already exists
