@@ -5,7 +5,7 @@ const authController = require("../controllers/auth.js");
 router.post("/signup", authController.signup);
 router.post("/login", authController.login);
 router.post("/logout", authController.logout);
-router.post("/forgetPassword", authController.forgetPassword);
+router.post("/forgetPassword/sendOTP", authController.sendOTP);
 router.post("/googleAuth", authController.googleAuth);
 
 module.exports = router;

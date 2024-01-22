@@ -29,6 +29,16 @@ const userSchema = new mongoose.Schema({
   profilePic: {
     type: String,
   },
+  OTP: {
+    type: String,
+  },
+  resetPasswordExpires: {
+    type: Date,
+  },
+  allowPasswordReset: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const User = mongoose.model("User", userSchema);

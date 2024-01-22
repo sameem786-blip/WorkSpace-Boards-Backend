@@ -123,9 +123,6 @@ exports.logout = async (req, res) => {
   }
 };
 
-//forget-password
-exports.forgetPassword = async (req, res) => {};
-
 //Google Oauth
 exports.googleAuth = async (req, res) => {
   try {
@@ -205,5 +202,104 @@ exports.googleAuth = async (req, res) => {
   } catch (error) {
     console.error("Error authenticating Google:", error);
     res.status(500).json({ message: "Error authenticating Google" });
+  }
+};
+
+exports.sendOTP = async (req, res) => {
+  try {
+    const userResponse = await User.findOne({ email: req.body.email });
+
+    if (!userResponse) {
+      return res.status(404).json({ message: "User does not exist" });
+    }
+
+    const otp = helpers.generateOTP();
+
+    userResponse.OTP = otp;
+    userResponse.resetPasswordExpires = Date.now() + 60 * 60 * 1000;
+
+    const subject = "Reset Password OTP";
+    const to = "sameembbs@gmail.com";
+    const body = `
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: center; color: #333; line-height: 1.6;">
+      <h2 style="color: #0066cc;">Password Reset Request</h2>
+      
+      <p>Hello ${userResponse.firstName},</p>
+      
+      <p>Your OTP for resetting the password is:</p>
+      <p style="background-color: #f2f2f2; padding: 10px; font-size: 1.2em; color: #009900; display: inline-block;">${otp}</p>
+      
+      <p style="color: #333;">This OTP is valid for the next 1 hour.</p>
+      
+      <p style="color: #cc0000;">If you didn't request a password reset, please ignore this email.</p>
+      
+      <p style="color: #333; font-size: 0.8em; margin-top: 20px;">Best regards,<br>Developers@ZicoArt</p>
+  </div>
+`;
+
+    await helpers.generateEmail(subject, body, cc, to);
+
+    await userResponse.save();
+
+    return res.status(200).json({ message: "OTP sent to email." });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+exports.submitOTP = async (req, res) => {
+  try {
+    const otp = req.body.otp;
+
+    const adminResponse = await Admin.findOne({ email: req.body.email });
+
+    if (Date.now() > adminResponse.resetPasswordExpires) {
+      return res.status(401).json("OTP has expired");
+    }
+
+    if (otp !== adminResponse.OTP) {
+      return res.status(401).json("Invalid O.T.P.");
+    }
+
+    adminResponse.allowPasswordReset = true;
+    adminResponse.OTP = undefined;
+    adminResponse.resetPasswordExpires = undefined;
+    await adminResponse.save();
+
+    return res.status(200).json({
+      message: "OTP verified succesfully",
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status.json("Internal Server Error.");
+  }
+};
+exports.resetPassword = async (req, res) => {
+  try {
+    const newPassword = req.body.newPassword;
+
+    const adminResponse = await Admin.findOne({ email: req.body.email });
+
+    if (!adminResponse.allowPasswordReset) {
+      return res.status(401).json({
+        message:
+          "Request and Submit an OTP to access the password reset functionality",
+      });
+    }
+
+    const newHashedPassword = await bcrypt.hash(newPassword, 10);
+
+    adminResponse.encryptedPassword = newHashedPassword;
+    adminResponse.allowPasswordReset = false;
+
+    await adminResponse.save();
+
+    return res.status(200).json({
+      message: "Password Reset Succesfully",
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Internal Server Error.");
   }
 };
