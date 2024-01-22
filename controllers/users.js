@@ -11,41 +11,38 @@ exports.updateUsername = async (req, res) => {
   try {
     const username = req.body.username;
     const userId = req.userData.userId;
-    let nModified = 0;
 
     const user = await User.findById(userId);
 
-    if (!User) {
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     if (username && username.trim() !== "") {
-      if (username && username.trim() !== "") {
-        User.username = username.trim();
-        nModified += 1;
-      }
-      if (nModified > 0) {
-        await User.save();
+      if (username.trim() !== user.username) {
+        user.username = username.trim();
+        await user.save();
+
+        const { firstName, lastName, _id, email, profilePic } = user;
         const token = jwt.sign(
           {
-            firstName: User.firstName,
-            lastName: User.lastName,
-            username: User.username,
-            UserId: User._id,
-            email: User.email,
-            profilePic: User.profilePic,
+            firstName,
+            lastName,
+            username: user.username,
+            userId: _id,
+            email,
+            profilePic,
           },
           process.env.JWT_SECRET,
           { expiresIn: "5d" }
         );
+
         return res.status(200).json({
           message: "Username updated successfully",
-          token: token,
+          token,
         });
       } else {
-        return res
-          .status(404)
-          .json({ message: "User not found or no changes made" });
+        return res.status(404).json({ message: "No changes made" });
       }
     } else {
       return res
@@ -54,7 +51,7 @@ exports.updateUsername = async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    res.status(500).json("Internal Server Error");
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -62,41 +59,31 @@ exports.updateProfilePic = async (req, res) => {
   try {
     const profilePic = req.body.profilePic;
     const userId = req.userData.userId;
-    let nModified = 0;
 
     const user = await User.findById(userId);
 
-    if (!User) {
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     if (profilePic && profilePic.trim() !== "") {
-      if (profilePic && profilePic.trim() !== "") {
-        User.profilePic = profilePic.trim();
-        nModified += 1;
-      }
-      if (nModified > 0) {
-        await User.save();
+      if (profilePic.trim() !== user.profilePic) {
+        user.profilePic = profilePic.trim();
+        await user.save();
+
+        const { firstName, lastName, username, _id, email, profilePic } = user;
         const token = jwt.sign(
-          {
-            firstName: User.firstName,
-            lastName: User.lastName,
-            username: User.username,
-            UserId: User._id,
-            email: User.email,
-            profilePic: User.profilePic,
-          },
+          { firstName, lastName, username, userId: _id, email, profilePic },
           process.env.JWT_SECRET,
           { expiresIn: "5d" }
         );
+
         return res.status(200).json({
-          message: "profilePic updated successfully",
-          token: token,
+          message: "Profile picture updated successfully",
+          token,
         });
       } else {
-        return res
-          .status(404)
-          .json({ message: "User not found or no changes made" });
+        return res.status(404).json({ message: "No changes made" });
       }
     } else {
       return res
@@ -105,6 +92,6 @@ exports.updateProfilePic = async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    res.status(500).json("Internal Server Error");
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
