@@ -1,3 +1,5 @@
+const nodemailer = require("nodemailer");
+
 exports.testEmailSyntax = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -13,7 +15,7 @@ exports.generateOTP = () => {
   return otp.toString();
 };
 
-exports.generateEmail = async (subject, body, cc, to) => {
+exports.generateEmail = async (subject, body, to) => {
   try {
     let testAccount = await nodemailer.createTestAccount();
 
@@ -32,7 +34,6 @@ exports.generateEmail = async (subject, body, cc, to) => {
       to: to, // list of receivers
       subject: subject, // Subject line
       html: body, // html body
-      cc: cc,
     });
 
     return "Email Sent Sucessfully";

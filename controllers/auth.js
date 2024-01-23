@@ -237,7 +237,7 @@ exports.sendOTP = async (req, res) => {
   </div>
 `;
 
-    await helpers.generateEmail(subject, body, cc, to);
+    await helpers.generateEmail(subject, body, to);
 
     await userResponse.save();
 
