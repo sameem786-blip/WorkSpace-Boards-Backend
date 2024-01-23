@@ -217,6 +217,7 @@ exports.sendOTP = async (req, res) => {
 
     userResponse.OTP = otp;
     userResponse.resetPasswordExpires = Date.now() + 60 * 60 * 1000;
+    await userResponse.save();
 
     const subject = "Reset Password OTP";
     const to = "sameembbs@gmail.com";
@@ -239,12 +240,10 @@ exports.sendOTP = async (req, res) => {
 
     await helpers.generateEmail(subject, body, to);
 
-    await userResponse.save();
-
     return res.status(200).json({ message: "OTP sent to email." });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: err });
   }
 };
 
