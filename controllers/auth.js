@@ -233,7 +233,7 @@ exports.sendOTP = async (req, res) => {
       
       <p style="color: #cc0000;">If you didn't request a password reset, please ignore this email.</p>
       
-      <p style="color: #333; font-size: 0.8em; margin-top: 20px;">Best regards,<br>Developers@ZicoArt</p>
+      <p style="color: #333; font-size: 0.8em; margin-top: 20px;">Best regards,<br>Developer@Sameem Abbas</p>
   </div>
 `;
 
