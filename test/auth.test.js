@@ -173,5 +173,22 @@ describe("sendOTP", () => {
     assert.ok(userResponse.save.calledOnce);
   });
 
+  it("should handle the case where the user does not exist", async () => {
+    // Mocking User.findOne response
+    const findOneStub = sandbox.stub(User, "findOne");
+    findOneStub.withArgs({ email: "nonexistent@example.com" }).resolves(null);
+
+    // Supertest to test the endpoint
+    const response = await request
+      .post("/auth/user/forgetPassword/sendOTP") // Replace with the actual endpoint path
+      .send({ email: "nonexistent@example.com" });
+
+    assert.equal(response.status, 404);
+    assert.deepStrictEqual(response.body, { message: "User does not exist" });
+
+    // Assertions for the function calls
+    assert.ok(findOneStub.calledOnce);
+  });
+
   // Add more test cases as needed
 });
