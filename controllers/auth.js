@@ -252,36 +252,36 @@ exports.submitOTP = async (req, res) => {
   try {
     const otp = req.body.otp;
 
-    const adminResponse = await Admin.findOne({ email: req.body.email });
+    const userResponse = await User.findOne({ email: req.body.email });
 
-    if (Date.now() > adminResponse.resetPasswordExpires) {
+    if (Date.now() > userResponse.resetPasswordExpires) {
       return res.status(401).json("OTP has expired");
     }
 
-    if (otp !== adminResponse.OTP) {
+    if (otp !== userResponse.OTP) {
       return res.status(401).json("Invalid O.T.P.");
     }
 
-    adminResponse.allowPasswordReset = true;
-    adminResponse.OTP = undefined;
-    adminResponse.resetPasswordExpires = undefined;
-    await adminResponse.save();
+    userResponse.allowPasswordReset = true;
+    userResponse.OTP = undefined;
+    userResponse.resetPasswordExpires = undefined;
+    await userResponse.save();
 
     return res.status(200).json({
       message: "OTP verified succesfully",
     });
   } catch (err) {
     console.log(err);
-    return res.status.json("Internal Server Error.");
+    return res.status(500).json("Internal Server Error.");
   }
 };
 exports.resetPassword = async (req, res) => {
   try {
     const newPassword = req.body.newPassword;
 
-    const adminResponse = await Admin.findOne({ email: req.body.email });
+    const userResponse = await User.findOne({ email: req.body.email });
 
-    if (!adminResponse.allowPasswordReset) {
+    if (!userResponse.allowPasswordReset) {
       return res.status(401).json({
         message:
           "Request and Submit an OTP to access the password reset functionality",
@@ -290,10 +290,10 @@ exports.resetPassword = async (req, res) => {
 
     const newHashedPassword = await bcrypt.hash(newPassword, 10);
 
-    adminResponse.encryptedPassword = newHashedPassword;
-    adminResponse.allowPasswordReset = false;
+    userResponse.encryptedPassword = newHashedPassword;
+    userResponse.allowPasswordReset = false;
 
-    await adminResponse.save();
+    await userResponse.save();
 
     return res.status(200).json({
       message: "Password Reset Succesfully",
