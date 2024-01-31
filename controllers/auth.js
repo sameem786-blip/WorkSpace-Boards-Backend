@@ -31,9 +31,9 @@ exports.signup = async (req, res) => {
         );
     }
     const userObj = {
-      username: req.body.username,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
+      username: req.body.username || "User",
+      firstName: req.body.firstName || "",
+      lastName: req.body.lastName || "",
       email: req.body.email,
       encryptedPassword: req.body.password,
       profilePic: req.body.profilePic || "",
