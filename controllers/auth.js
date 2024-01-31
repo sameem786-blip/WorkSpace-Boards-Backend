@@ -31,7 +31,7 @@ exports.signup = async (req, res) => {
         );
     }
     const userObj = {
-      username: req.body.username || "User",
+      username: req.body.username || req.body.email,
       firstName: req.body.firstName || "",
       lastName: req.body.lastName || "",
       email: req.body.email,
