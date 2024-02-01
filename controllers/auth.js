@@ -31,12 +31,12 @@ exports.signup = async (req, res) => {
         );
     }
     const userObj = {
-      username: req.body.username || req.body.email,
-      firstName: req.body.firstName || "",
-      lastName: req.body.lastName || "",
+      username: req.body.email,
+      firstName: "",
+      lastName: "",
       email: req.body.email,
       encryptedPassword: req.body.password,
-      profilePic: req.body.profilePic || "",
+      profilePic:"",
       role: "user",
     };
 
