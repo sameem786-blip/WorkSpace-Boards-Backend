@@ -22,6 +22,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 connect();
 
 app.use("/auth/user/", AuthRoutes);
-app.use("/api/user/", UserRoutes);
+app.use("/api/user", UserRoutes);
 
 module.exports = app;
