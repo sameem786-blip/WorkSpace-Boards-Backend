@@ -106,7 +106,6 @@ exports.updateFirstname = async (req, res) => {
 };
 exports.updateLastname = async (req, res) => {
   try {
-    console.log("Updating username")
     const lastname = req.body.lastName;
     const userId = req.userData.userId;
 
