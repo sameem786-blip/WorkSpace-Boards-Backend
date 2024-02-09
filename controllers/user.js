@@ -55,9 +55,11 @@ exports.updateUsername = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 exports.updateFirstname = async (req, res) => {
   try {
-    const firstName = req.body.firstName;
+    console.log("Updating First Name")
+    const firstname = req.body.firstName;
     const userId = req.userData.userId;
 
     const user = await User.findById(userId);
@@ -66,17 +68,17 @@ exports.updateFirstname = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (firstName && firstName.trim() !== "") {
-      if (firstName.trim() !== user.firstName) {
-        user.firstName = firstName.trim();
+    if (firstname && firstname.trim() !== "") {
+      if (firstname.trim() !== user.firstName) {
+        user.firstName = firstname.trim();
         await user.save();
 
-        const { firstName, lastName, _id, email, profilePic } = user;
+        const { lastName, _id, email, profilePic,username } = user;
         const token = jwt.sign(
           {
-            firstName,
-            lastName,
             firstName: user.firstName,
+            lastName,
+            username,
             userId: _id,
             email,
             profilePic,
@@ -86,7 +88,7 @@ exports.updateFirstname = async (req, res) => {
         );
 
         return res.status(200).json({
-          message: "firstName updated successfully",
+          message: "Username updated successfully",
           token,
         });
       } else {
