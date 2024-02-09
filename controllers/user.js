@@ -107,7 +107,7 @@ exports.updateFirstname = async (req, res) => {
 exports.updateLastname = async (req, res) => {
   try {
     console.log("Updating username")
-    const lastName = req.body.lastName;
+    const lastname = req.body.lastName;
     const userId = req.userData.userId;
 
     const user = await User.findById(userId);
@@ -116,17 +116,17 @@ exports.updateLastname = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (lastName && lastName.trim() !== "") {
-      if (lastName.trim() !== user.lastName) {
-        user.lastName = lastName.trim();
+    if (lastname && lastname.trim() !== "") {
+      if (lastname.trim() !== user.lastName) {
+        user.lastName = lastname.trim();
         await user.save();
 
-        const { firstName, lastName, _id, email, profilePic } = user;
+        const { firstName, _id, email, profilePic, username } = user;
         const token = jwt.sign(
           {
-            lastName,
-            lastName,
+            firstName,
             lastName: user.lastName,
+            username,
             userId: _id,
             email,
             profilePic,
