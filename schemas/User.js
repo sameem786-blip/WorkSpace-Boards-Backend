@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
   },
   allowPasswordReset: {
     type: Boolean,
-    default: false,
+    default: false
   },
 });
 
