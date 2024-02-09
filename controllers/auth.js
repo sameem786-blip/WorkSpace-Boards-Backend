@@ -108,7 +108,6 @@ exports.login = async (req, res) => {
       user: userWithoutPassword,
     });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
