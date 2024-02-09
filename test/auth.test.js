@@ -14,7 +14,7 @@ async function createUser(userData) {
 
 // Helper function to perform user login
 async function loginUser(credentials) {
-  return request.post("/auth/user/login").send(credentials);
+  return request.post("/auth/user/login").send(credentials)
 }
 
 // describe("User Signup and Login API", () => {
