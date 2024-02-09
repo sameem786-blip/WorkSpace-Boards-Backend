@@ -5,7 +5,7 @@ const checkLogin = require("../middlewares/checkLogin.js");
 
 router.put("/updateUsername",checkLogin, userController.updateUsername);
 router.put("/updateProfilePic", userController.updateProfilePic);
-router.put("/updateFirstname", userController.updateProfilePic);
-router.put("/updateLastname", userController.updateProfilePic);
+router.put("/updateFirstname", checkLogin,userController.updateFirstname);
+router.put("/updateLastname", checkLogin,userController.updateLastname);
 
 module.exports = router;
