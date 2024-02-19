@@ -260,7 +260,7 @@ exports.submitOTP = async (req, res) => {
       return res.status(401).json("Invalid O.T.P.");
     }
 
-    userResponse.allowPasswordReset = true;
+    userResponse.allowPasswordReset = false;
     userResponse.OTP = undefined;
     userResponse.resetPasswordExpires = undefined;
     await userResponse.save();
