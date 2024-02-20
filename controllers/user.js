@@ -10,7 +10,7 @@ const helpers = require("../helpers/index");
 exports.updateUsername = async (req, res) => {
   try {
     console.log("Updating username")
-    const username = req.body.username;
+    const usernam = req.body.username;
     const userId = req.userData.userId;
 
     const user = await User.findById(userId);
